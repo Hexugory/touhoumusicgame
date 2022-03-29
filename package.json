@@ -1,0 +1,15 @@
+{
+  "name": "tmq",
+  "version": "1.0.0",
+  "description": "",
+  "main": "tmq.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Guy Hero",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.6.3"
+  }
+}
