@@ -17,14 +17,6 @@ export class TestCommand implements Command {
     args = []
 
 	async execute(msg: Message) {
-        console.debug('test');
-        const client = msg.client as TMQClient;
-        client.game?.endGame();
-        console.debug('end game');
-        const voiceChannel = msg.client.channels.resolve(env.VOICE_CHANNEL as string) as VoiceChannel;
-        const textChannel = msg.client.channels.resolve(env.TEXT_CHANNEL as string) as TextChannel;
-        console.debug('resolve channels');
-        client.game = new Game(client, voiceChannel, textChannel);
-        console.debug('game newed');
+        msg.client.application!.commands.set([]);
 	}
 };

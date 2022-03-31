@@ -1,17 +1,12 @@
-import { Interaction, PermissionResolvable } from "discord.js"
+import { ApplicationCommandOptionData, CommandInteraction, PermissionResolvable } from "discord.js"
 
 export interface SlashCommand {
     name: string
     description: string
     cooldown?: number
     permission: PermissionResolvable[]
-    guildID: string
+    guildID?: string
     ownerOnly: boolean
-    args: {
-        name: string
-        type: string
-        description: string
-        required: boolean
-    }[]
-    execute(int: Interaction): Promise<void>
+    args: ApplicationCommandOptionData[]
+    execute(int: CommandInteraction): Promise<void>
 }

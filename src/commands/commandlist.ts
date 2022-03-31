@@ -1,3 +1,4 @@
+import { DeploySlashCommand } from "./deployslash";
 import { EndGameCommand } from "./endgame";
 import { GlobalBlacklistCommand } from "./gblacklist";
 import { KillCommand } from "./kill";
@@ -11,5 +12,6 @@ export const CommandList = [
     new TestCommand(),
     new KillCommand(),
     new StartGameCommand(),
-    new EndGameCommand()
+    new EndGameCommand(),
+    new DeploySlashCommand()
 ];

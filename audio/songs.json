@@ -255,6 +255,10 @@
             "bloom nobly ink-black cherry blossom ~ border of life",
             "bloom nobly, ink-black cherry blossom",
             "bloom nobly ink-black cherry blossom",
+            "bloom nobly, ink black cherry blossom ~ border of life",
+            "bloom nobly ink black cherry blossom ~ border of life",
+            "bloom nobly, ink black cherry blossom",
+            "bloom nobly ink black cherry blossom",
             "border of life"
         ],
         "file": "07\\13.ogg",
@@ -402,7 +406,9 @@
     {
         "names": [
             "love-colored master spark",
-            "love-coloured master spark"
+            "love-coloured master spark",
+            "love colored master spark",
+            "love coloured master spark"
         ],
         "file": "08\\10.ogg",
         "length": 126
@@ -411,7 +417,9 @@
         "names": [
             "cinderella cage ~ kagome-kagome",
             "cinderella cage",
-            "kagome-kagome"
+            "kagome-kagome",
+            "cinderella cage ~ kagome kagome",
+            "kagome kagome"
         ],
         "file": "08\\11.ogg",
         "length": 172
@@ -553,7 +561,10 @@
     },
     {
         "names": [
-            "adventure of the lovestruck tomboy"
+            "adventure of the lovestruck tomboy",
+            "adventures of the lovestruck tomboy",
+            "adventure of a lovestruck tomboy",
+            "adventures of a lovestruck tomboy"
         ],
         "file": "09\\07.ogg",
         "length": 148
@@ -592,7 +603,7 @@
     },
     {
         "names": [
-            "poison body ~ forsake doll",
+            "poison body ~ forsaken doll",
             "poison body",
             "forsaken doll"
         ],
@@ -1136,7 +1147,8 @@
     },
     {
         "names": [
-            "nemesis' stronghold"
+            "nemesis' stronghold",
+            "nemesis stronghold"
         ],
         "file": "125\\04.ogg",
         "length": 91
@@ -1451,7 +1463,8 @@
     },
     {
         "names": [
-            "joutoujin of ceramics"
+            "joutoujin of ceramics",
+            "joutounin of ceramics"
         ],
         "file": "17\\11.ogg",
         "length": 140
@@ -1465,8 +1478,8 @@
     },
     {
         "names": [
-            "tortise dragon ~ fortune and misfortune",
-            "tortise dragon",
+            "tortoise dragon ~ fortune and misfortune",
+            "tortoise dragon",
             "fortune and misfortune"
         ],
         "file": "17\\09.ogg",
@@ -1799,7 +1812,16 @@
         "names": [
             "mysterious, mysterious tools",
             "mysterious mysterious tools",
-            "mysterious tools"
+            "mysterious tools",
+            "mysterious, mysterious instruments",
+            "mysterious mysterious instruments",
+            "mysterious instruments",
+            "strange, strange tools",
+            "strange strange tools",
+            "strange tools",
+            "strange, strange instruments",
+            "strange strange instruments",
+            "strange instruments"
         ],
         "file": "14\\17.ogg",
         "length": 76

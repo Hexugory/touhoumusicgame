@@ -13,12 +13,14 @@ interface Player {
     name: string
     score: number
     guess: string
+    correct: boolean
 }
 
-enum GameState {
+export enum GameState {
     Starting,
     Guessing,
-    Revealing
+    Revealing,
+    Ended
 }
 
 const FFMPEG_OPUS_ARGUMENTS = [
@@ -82,19 +84,17 @@ export class Game {
                 this.players.set(msg.author.id, {
                     name: msg.author.username,
                     score: 0,
-                    guess: ''
+                    guess: '',
+                    correct: false
                 });
             }
 
             const player = this.players.get(msg.author.id);
-            player!.guess = msg.content;
+            player!.guess = msg.content.toLowerCase();
+            if (this.currentSong?.names.includes(player!.guess)) player!.correct = true;
             msg.react('🗳️');
 
             return;
-        }
-
-        if (msg.content === 'luhmao') {
-            this.endGame();
         }
     }
 
@@ -143,7 +143,7 @@ export class Game {
         this.end = setTimeout(this.startSong.bind(this), 30_000);
         this.player.play(resource);
         
-        embed.setTitle(`guess the new song, DM me your answer!`);
+        embed.setTitle(`guess the new song, DM me your answer or use /guess!`);
         this.textChannel.send({ embeds: [embed] });
     }
 
@@ -154,10 +154,11 @@ export class Game {
         });
 
         this.players.forEach((player) => {
-            if (this.currentSong?.names.includes(player.guess)) {
+            if (player.correct) {
                 player.score++;
             }
             player.guess = '';
+            player.correct = false;
         });
 
         const scorestr = this.getScores();
@@ -169,6 +170,7 @@ export class Game {
     }
 
     endGame () {
+        this.state = GameState.Ended;
         clearTimeout(this.reveal);
         clearTimeout(this.end);
         this.client.removeListener('messageCreate', this.messageCallback);

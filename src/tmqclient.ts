@@ -7,7 +7,8 @@ import { Command } from "./commands/command";
 import { BlacklistUsers } from "./models/blacklistusers";
 import { CommandBlacklist } from "./models/commandblacklist";
 import { SlashCommand } from "./slash/slash";
-import { Game } from "./game";
+import { Game, GameState } from "./game";
+import { SlashCommandList } from "./slash/commandlist";
 
 function gracefulDisconnect () {
     getVoiceConnections().forEach(( connection: VoiceConnection ) => {
@@ -30,10 +31,14 @@ export class TMQClient extends Client {
             this.commands.set(command.name, command);
         }
 
+        for (const command of SlashCommandList) {
+            this.slashCommands.set(command.name, command);
+        }
+
         this.on('messageCreate', (msg: Message) => {
             if (!msg.content.startsWith(env.PREFIX as string) || msg.author.bot) return;
 
-            if (msg.author.id != env.OWNER && (BlacklistUsers.findOne({ where: { user_id: msg.author.id } }))) return;
+            //if (msg.author.id != env.OWNER && (BlacklistUsers.findOne({ where: { user_id: msg.author.id } }))) return;
 
             this.parseCommand(msg);
         });
@@ -60,7 +65,7 @@ export class TMQClient extends Client {
                 }
         
                 command.execute(int).catch(error => {
-                    int.reply({ content: 'there was an error\nping guy 19 times', ephemeral: true });
+                    int.reply({ content: 'there was an error, shout at guy and hope he hears you!', ephemeral: true });
                     return console.error(error);
                 });
                 return console.info(`${int.user.tag} (${int.user.id}) used ${command.name} in ${'name' in int.channel ? int.channel.name : 'DM CHANNEL'} (${int.channel.id})`);
@@ -115,12 +120,12 @@ export class TMQClient extends Client {
                 }
             }
 
-            if (msg.author.id != env.OWNER) {
+            /*if (msg.author.id != env.OWNER) {
                 const member = (await CommandBlacklist.findOrCreate({ where: { user_id: msg.author.id, guild_id: msg.guild!.id } }))[0];
                 if (JSON.parse(member.blacklist)[command.name]) {
                     return;
                 }
-            }
+            }*/
         }
 
         if(command.guildOnly && !(msg.channel instanceof BaseGuildTextChannel)) {
@@ -217,7 +222,7 @@ export class TMQClient extends Client {
     }
 
     startGame () {
-        this.endGame();
+        if (this.game?.state != GameState.Ended) this.game?.endGame();
 
         const voiceChannel = this.channels.resolve(env.VOICE_CHANNEL as string) as VoiceChannel;
         const textChannel = this.channels.resolve(env.TEXT_CHANNEL as string) as TextChannel;
@@ -226,7 +231,7 @@ export class TMQClient extends Client {
     }
 
     endGame () {
-        this.game?.endGame();
+        if (this.game?.state != GameState.Ended) this.game?.endGame();
         this.game = undefined;
     }
 
