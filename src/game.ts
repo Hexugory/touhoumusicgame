@@ -12,7 +12,7 @@ interface Song {
 interface Player {
     name: string
     score: number
-    guessed: boolean
+    guess: string
 }
 
 enum GameState {
@@ -50,6 +50,8 @@ for (const song of SONG_LIST) {
     });
 }
 
+
+
 export class Game {
     constructor (client: TMQClient, voiceChannel: BaseGuildVoiceChannel, textChannel: TextChannel) {
         console.debug('constructing game');
@@ -74,23 +76,20 @@ export class Game {
 
     messageCallback (msg: Message) {
         if (!(msg.channel instanceof DMChannel) || msg.author.bot) return;
-        console.debug(this.state, GameState.Guessing, this.currentSong?.names, msg.content.toLowerCase());
 
-        if (this.state === GameState.Guessing && this.currentSong?.names.includes(msg.content.toLowerCase())) {
-            console.debug('message is correct and guess phase');
-
+        if (this.state === GameState.Guessing) {
             if (!this.players.get(msg.author.id)) {
                 this.players.set(msg.author.id, {
                     name: msg.author.username,
                     score: 0,
-                    guessed: false
+                    guess: ''
                 });
             }
+
             const player = this.players.get(msg.author.id);
-            if (!player!.guessed) {
-                player!.score++;
-                player!.guessed = true;
-            }
+            player!.guess = msg.content;
+            msg.react('🗳️');
+
             return;
         }
 
@@ -125,9 +124,6 @@ export class Game {
             this.endGame();
             return;
         }
-        this.players.forEach((player) => {
-            player.guessed = false;
-        });
 
         this.currentSong = songs.random();
         this.remainingSongs--;
@@ -156,6 +152,14 @@ export class Game {
         this.client.user?.setActivity({
             name: 'reveal phase!'
         });
+
+        this.players.forEach((player) => {
+            if (this.currentSong?.names.includes(player.guess)) {
+                player.score++;
+            }
+            player.guess = '';
+        });
+
         const scorestr = this.getScores();
         const embed = new MessageEmbed()
             .setColor(0xfd6b5f)
@@ -179,7 +183,7 @@ export class Game {
     connection: VoiceConnection
     player: AudioPlayer
     currentSong?: Song
-    remainingSongs = 2
+    remainingSongs = 20
     state = GameState.Starting
     reveal = setTimeout(()=>{},0);
     end = setTimeout(()=>{},0);
