@@ -1,4 +1,4 @@
-import { Message, PermissionResolvable, User } from "discord.js"
+import { Message, User } from "discord.js"
 import { Command } from "./command"
 import { UserArgument } from "../types/user"
 import { BlacklistUsers } from "../models/blacklistusers"

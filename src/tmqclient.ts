@@ -1,4 +1,4 @@
-import { CreateVoiceConnectionOptions, joinVoiceChannel, JoinVoiceChannelOptions, VoiceConnection } from "@discordjs/voice";
+import { CreateVoiceConnectionOptions, getVoiceConnections, joinVoiceChannel, JoinVoiceChannelOptions, VoiceConnection } from "@discordjs/voice";
 import { BaseGuildTextChannel, Client, ClientOptions, Collection, GuildMember, Message, NewsChannel, TextBasedChannel, TextChannel, VoiceChannel } from "discord.js";
 import { env } from "process";
 import { Sequelize } from "sequelize";
@@ -7,10 +7,22 @@ import { Command } from "./commands/command";
 import { BlacklistUsers } from "./models/blacklistusers";
 import { CommandBlacklist } from "./models/commandblacklist";
 import { SlashCommand } from "./slash/slash";
+import { Game } from "./game";
+
+function gracefulDisconnect () {
+    getVoiceConnections().forEach(( connection: VoiceConnection ) => {
+        connection.disconnect();
+        connection.destroy();
+    });
+}
 
 export class TMQClient extends Client {
     constructor (options: ClientOptions, db: Sequelize) {
         super(options);
+
+        process.on('exit', gracefulDisconnect);
+
+        process.on('SIGINT', gracefulDisconnect);
 
         this.db = db;
 
@@ -39,11 +51,11 @@ export class TMQClient extends Client {
                 if (!command) throw new Error('Slash command does not exist');
         
                 if (command.permission && int.user.id != env.OWNER) {
-                    if (!(int.channel instanceof BaseGuildTextChannel)) {
+                    if (!(int.channel instanceof TextChannel)) {
                         int.reply({ content: 'that command doesn\'t work in DMs!', ephemeral: true })
                     }
                     for (const permission of command.permission) {
-                        if (!(int!.member as GuildMember).permissionsIn(int.channel as TextChannel | NewsChannel).has(permission)) return int.reply({ content: 'you aren\'t allowed to use that command', ephemeral: true });
+                        if (!(int!.member as GuildMember).permissionsIn(int.channel as TextChannel).has(permission)) return int.reply({ content: 'you aren\'t allowed to use that command', ephemeral: true });
                     }
                 }
         
@@ -111,12 +123,12 @@ export class TMQClient extends Client {
             }
         }
 
-        if(command.guildOnly) {
+        if(command.guildOnly && !(msg.channel instanceof BaseGuildTextChannel)) {
             msg.reply('that command doesn\'t work in DMs!');
             return;
         }
     
-        if (!command.args[0].optional && args.length === 0) {
+        if (command.args.length > 0 && !command.args[0].optional && args.length === 0) {
             let reply = 'i can\'t do anything without the command arguments!';
     
             if (command.usage) {
@@ -193,34 +205,36 @@ export class TMQClient extends Client {
                 msg.reply(`\`${args[i]}\` is invalid!`);
                 return;
             }
-
-            const keyedArgs: { [key: string]: any }  = {};
-            for (var i = 0; i < command.args.length; i++) {
-                keyedArgs[command.args[i].key] = args[i];
-            }
-
-            console.info(`${msg.author.tag} (${msg.author.id}) used ${command.name} in ${'name' in msg.channel ? msg.channel.name : 'DM CHANNEL'} (${msg.channel.id})`);
-            command.execute(msg, keyedArgs);
-            return command;
         }
+        const keyedArgs: { [key: string]: any } = {};
+        for (var i = 0; i < command.args.length; i++) {
+            keyedArgs[command.args[i].key] = args[i];
+        }
+
+        console.info(`${msg.author.tag} (${msg.author.id}) used ${command.name} in ${'name' in msg.channel ? msg.channel.name : 'DM CHANNEL'} (${msg.channel.id})`);
+        command.execute(msg, keyedArgs);
+        return command;
     }
 
-    /**
-     * Join voice channel while destroying previous voice connection
-     * @param channel 
-     */
-    joinVoiceChannel (channel: VoiceChannel) {
-        this.voiceConnection?.destroy();
-        this.voiceConnection = joinVoiceChannel({
-            channelId: channel.id,
-            guildId: channel.guild.id
-        } as JoinVoiceChannelOptions & CreateVoiceConnectionOptions);
+    startGame () {
+        this.endGame();
+
+        const voiceChannel = this.channels.resolve(env.VOICE_CHANNEL as string) as VoiceChannel;
+        const textChannel = this.channels.resolve(env.TEXT_CHANNEL as string) as TextChannel;
+
+        this.game = new Game(this, voiceChannel, textChannel);
+    }
+
+    endGame () {
+        this.game?.endGame();
+        this.game = undefined;
     }
 
     readonly commands = new Collection<string, Command>();
     readonly slashCommands = new Collection<string, SlashCommand>();
     readonly cooldowns = new Collection<string, Collection<string, number>>();
     db: Sequelize
+    game?: Game
 
     voiceConnection?: VoiceConnection;
 }
