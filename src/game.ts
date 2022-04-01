@@ -1,5 +1,5 @@
-import { AudioPlayer, createAudioPlayer, createAudioResource, joinVoiceChannel, StreamType, VoiceConnection } from "@discordjs/voice";
-import { BaseGuildVoiceChannel, Collection, DMChannel, Message, MessageEmbed, Snowflake, TextChannel } from "discord.js";
+import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, joinVoiceChannel, StreamType, VoiceConnection } from "@discordjs/voice";
+import { BaseGuildVoiceChannel, Collection, DMChannel, Message, MessageEmbed, Snowflake, StageChannel, TextChannel } from "discord.js";
 import { FFmpeg } from "prism-media";
 import { Scores } from "./models/scores";
 import { TMQClient } from "./tmqclient";
@@ -76,6 +76,9 @@ export class Game {
         });
 
         this.player = createAudioPlayer();
+        this.player.on(AudioPlayerStatus.Playing, () => {
+            if (voiceChannel instanceof StageChannel) voiceChannel.guild.me!.voice.setSuppressed(false);
+        });
         this.connection.subscribe(this.player);
 
         this.textChannel = textChannel;
@@ -133,6 +136,11 @@ export class Game {
             const scorestr = this.getScores(false);
             embed.setTitle(`the game is over, thanks for playing!`)
                 .setDescription(scorestr);
+            if (this.client.autoRestartGame) {
+                embed.setFooter({
+                    text: 'starting again in 10 seconds...'
+                });
+            }
             this.textChannel.send({ embeds: [embed] });
 
             const winners = [...this.players.filter((player) => {
