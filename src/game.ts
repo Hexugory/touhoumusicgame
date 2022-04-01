@@ -166,10 +166,10 @@ export class Game {
 
         this.currentSong = SONGS.random();
         this.remainingSongs--;
-        console.debug(this.currentSong, SONGS.size);
+        console.debug(this.currentSong, __dirname + '/../audio/'+ this.currentSong!.file);
 
         const ffmpeg = new FFmpeg({
-            args: ['-ss', `${Math.floor(Math.random()*(this.currentSong!.length-30))}`, '-t', '30', '-i', __dirname + '\\..\\audio\\'+ this.currentSong!.file, ...FFMPEG_OPUS_ARGUMENTS]
+            args: ['-ss', `${Math.floor(Math.random()*(this.currentSong!.length-30))}`, '-t', '30', '-i', __dirname + '/../audio/'+ this.currentSong!.file, ...FFMPEG_OPUS_ARGUMENTS]
         });
         const resource = createAudioResource(ffmpeg, { inputType : StreamType.OggOpus });
 
