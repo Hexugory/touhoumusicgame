@@ -62,7 +62,7 @@ for (const song of SONG_LIST) {
 }
 
 function cleanFormatting (string: string) {
-    return string.replace(/\`/g, '')
+    return string.replace(/(\`|\n)/g, '');
 }
 
 export class Game {
