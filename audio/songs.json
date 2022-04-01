@@ -105,7 +105,8 @@
     },
     {
         "names": [
-            "the centennial festival for magical girls"
+            "the centennial festival for magical girls",
+            "centennial festival for magical girls"
         ],
         "file": "06\\14.ogg",
         "length": 150
@@ -148,6 +149,8 @@
         "names": [
             "ghostly dream ~ snow or cherry petal",
             "ghostly dream",
+            "mystical dream ~ snow or cherry petal",
+            "mystical dream",
             "snow or cherry petal"
         ],
         "file": "07\\01.ogg",
@@ -174,7 +177,11 @@
             "the fantastic tales from tono",
             "the fantastic tales from tohno",
             "the fantastic legend of tono",
-            "the fantastic legend of tohno"
+            "the fantastic legend of tohno",
+            "fantastic tales from tono",
+            "fantastic tales from tohno",
+            "fantastic legend of tono",
+            "fantastic legend of tohno"
         ],
         "file": "07\\04.ogg",
         "length": 139
@@ -190,7 +197,8 @@
     },
     {
         "names": [
-            "the doll maker of bucuresti"
+            "the doll maker of bucuresti",
+            "doll maker of bucuresti"
         ],
         "file": "07\\06.ogg",
         "length": 124
@@ -208,7 +216,8 @@
     },
     {
         "names": [
-            "the capital city of flowers in the sky"
+            "the capital city of flowers in the sky",
+            "capital city of flowers in the sky"
         ],
         "file": "07\\08.ogg",
         "length": 244
@@ -217,6 +226,8 @@
         "names": [
             "phantom band ~ phantom ensemble",
             "phantom band",
+            "ghostly band ~ phantom ensemble",
+            "ghostly band",
             "phantom ensemble"
         ],
         "file": "07\\09.ogg",
@@ -643,7 +654,8 @@
     },
     {
         "names": [
-            "the mound where the flowers reflect"
+            "the mound where the flowers reflect",
+            "mound where the flowers reflect"
         ],
         "file": "09\\16.ogg",
         "length": 70
@@ -657,7 +669,8 @@
     },
     {
         "names": [
-            "the flowers remain in fantasy"
+            "the flowers remain in fantasy",
+            "flowers remain in fantasy"
         ],
         "file": "09\\18.ogg",
         "length": 49
@@ -748,6 +761,8 @@
         "names": [
             "the road of the misfortune god ~ dark road",
             "the road of the misfortune god",
+            "road of the misfortune god ~ dark road",
+            "road of the misfortune god",
             "dark road"
         ],
         "file": "10\\04.ogg",
@@ -823,6 +838,8 @@
         "names": [
             "the venerable ancient battlefield ~ suwa foughten field",
             "the venerable ancient battlefield",
+            "venerable ancient battlefield ~ suwa foughten field",
+            "venerable ancient battlefield",
             "suwa foughten field"
         ],
         "file": "10\\13.ogg",
@@ -854,6 +871,8 @@
         "names": [
             "the gods give us blessed rain ~ sylphid dream",
             "the gods give us blessed rain",
+            "gods give us blessed rain ~ sylphid dream",
+            "gods give us blessed rain",
             "sylphid dream"
         ],
         "file": "10\\17.ogg",
@@ -875,7 +894,8 @@
     },
     {
         "names": [
-            "the dark blowhole"
+            "the dark blowhole",
+            "dark blowhole"
         ],
         "file": "11\\02.ogg",
         "length": 98
@@ -884,6 +904,8 @@
         "names": [
             "the sealed-away youkai ~ lost place",
             "the sealed-away youkai",
+            "sealed-away youkai ~ lost place",
+            "sealed-away youkai",
             "lost place"
         ],
         "file": "11\\03.ogg",
@@ -984,7 +1006,8 @@
     },
     {
         "names": [
-            "the earth spirits' homecoming"
+            "the earth spirits' homecoming",
+            "earth spirits' homecoming"
         ],
         "file": "11\\16.ogg",
         "length": 72
@@ -1073,7 +1096,10 @@
     },
     {
         "names": [
-            "the tiger-patterned bishamonten"
+            "the tiger-patterned bishamonten",
+            "the tiger-patterned vaisravana",
+            "the tiger patterned bishamonten",
+            "the tiger patterned vaisravana"
         ],
         "file": "12\\11.ogg",
         "length": 209
@@ -1412,6 +1438,131 @@
     },
     {
         "names": [
+            "a rainbow-colored world",
+            "a rainbow colored world",
+            "the rainbow colored world",
+            "the rainbow-colored world"
+        ],
+        "file": "18\\17.ogg",
+        "length": 73
+    },
+    {
+        "names": [
+            "the sunday after the storm"
+        ],
+        "file": "18\\16.ogg",
+        "length": 57
+    },
+    {
+        "names": [
+            "the princess who slays dragon kings"
+        ],
+        "file": "18\\15.ogg",
+        "length": 157
+    },
+    {
+        "names": [
+            "the great fantastic underground railway network"
+        ],
+        "file": "18\\14.ogg",
+        "length": 170
+    },
+    {
+        "names": [
+            "where is that bustling marketplace now ~ immemorial marketeers",
+            "immemorial marketeers",
+            "where is that bustling marketplace now"
+        ],
+        "file": "18\\13.ogg",
+        "length": 248
+    },
+    {
+        "names": [
+            "lunar rainbow"
+        ],
+        "file": "18\\12.ogg",
+        "length": 164
+    },
+    {
+        "names": [
+            "starry mountain of tenma"
+        ],
+        "file": "18\\11.ogg",
+        "length": 144
+    },
+    {
+        "names": [
+            "the long-awaited oumagatoki",
+            "the long awaited oumagatoki"
+        ],
+        "file": "18\\10.ogg",
+        "length": 173
+    },
+    {
+        "names": [
+            "ore from the age of the gods"
+        ],
+        "file": "18\\09.ogg",
+        "length": 150
+    },
+    {
+        "names": [
+            "the obsolescent industrial remains"
+        ],
+        "file": "18\\08.ogg",
+        "length": 208
+    },
+    {
+        "names": [
+            "smoking dragon"
+        ],
+        "file": "18\\07.ogg",
+        "length": 131
+    },
+    {
+        "names": [
+            "the perpetual snow of komakusa blossoms"
+        ],
+        "file": "18\\06.ogg",
+        "length": 173
+    },
+    {
+        "names": [
+            "banditry technology"
+        ],
+        "file": "18\\05.ogg",
+        "length": 111
+    },
+    {
+        "names": [
+            "the cliff hidden in deep green"
+        ],
+        "file": "18\\04.ogg",
+        "length": 101
+    },
+    {
+        "names": [
+            "kitten of great fortune"
+        ],
+        "file": "18\\03.ogg",
+        "length": 95
+    },
+    {
+        "names": [
+            "a shower of strange occurrences"
+        ],
+        "file": "18\\02.ogg",
+        "length": 116
+    },
+    {
+        "names": [
+            "a rainbow spanning gensokyo"
+        ],
+        "file": "18\\01.ogg",
+        "length": 109
+    },
+    {
+        "names": [
             "returning home from the underground"
         ],
         "file": "17\\17.ogg",
@@ -1446,10 +1597,14 @@
     },
     {
         "names": [
-            "Entrust this world to idols ~ idolatrize world",
+            "entrust this world to idols ~ idolatrize world",
+            "entrust this world to idols",
             "idolatrize world",
-            "Entrust this world to idols ~ idolatrize the world",
-            "idolatrize the world"
+            "entrust this world to idols ~ idolatrize the world",
+            "idolatrize the world",
+            "entrusting this world to idols ~ idolatrize world",
+            "entrusting this world to idols",
+            "entrusting this world to idols ~ idolatrize the world"
         ],
         "file": "17\\13.ogg",
         "length": 233
@@ -1559,7 +1714,9 @@
         "names": [
             "secret god matara ~ hidden star in all seasons",
             "secret god matara",
-            "hidden star in all seasons"
+            "hidden star in all seasons",
+            "secret god matara ~ hidden star in all seasons.",
+            "hidden star in all seasons."
         ],
         "file": "16\\15.ogg",
         "length": 180
@@ -1610,7 +1767,9 @@
     {
         "names": [
             "the magic straw-hat jizo",
-            "the magic straw hat jizo"
+            "the magic straw hat jizo",
+            "the magic straw-hat ksitigarbha",
+            "the magic straw hat ksitigarbha"
         ],
         "file": "16\\09.ogg",
         "length": 104
@@ -1731,7 +1890,9 @@
     {
         "names": [
             "pierrot of the star-spangled banner",
-            "pierrot of the star spangled banner"
+            "pierrot of the star spangled banner",
+            "the pierrot of the star-spangled banner",
+            "the pierrot of the star spangled banner"
         ],
         "file": "15\\11.ogg",
         "length": 239
@@ -1746,7 +1907,8 @@
     },
     {
         "names": [
-            "reversed wheel of fortune"
+            "reversed wheel of fortune",
+            "the reversed wheel of fortune"
         ],
         "file": "15\\09.ogg",
         "length": 172

@@ -70,6 +70,17 @@ export class TMQClient extends Client {
                 });
                 return console.info(`${int.user.tag} (${int.user.id}) used ${command.name} in ${'name' in int.channel ? int.channel.name : 'DM CHANNEL'} (${int.channel.id})`);
             }
+            else if (int.isAutocomplete()) {
+                if (!int.channel) return;
+
+                const command = this.slashCommands.get(int.commandName);
+
+                if (!command) throw new Error('Slash command does not exist');
+        
+                command.autocomplete?.(int).catch(error => {
+                    return console.error(error);
+                });
+            }
         });
 
         this.login(env.TOKEN);
@@ -233,6 +244,7 @@ export class TMQClient extends Client {
     endGame () {
         if (this.game?.state != GameState.Ended) this.game?.endGame();
         this.game = undefined;
+        this.autoRestartGame = false;
     }
 
     readonly commands = new Collection<string, Command>();
@@ -240,6 +252,7 @@ export class TMQClient extends Client {
     readonly cooldowns = new Collection<string, Collection<string, number>>();
     db: Sequelize
     game?: Game
+    autoRestartGame = false
 
     voiceConnection?: VoiceConnection;
 }

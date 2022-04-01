@@ -1,6 +1,7 @@
 import { AudioPlayer, createAudioPlayer, createAudioResource, joinVoiceChannel, StreamType, VoiceConnection } from "@discordjs/voice";
 import { BaseGuildVoiceChannel, Collection, DMChannel, Message, MessageEmbed, Snowflake, TextChannel } from "discord.js";
 import { FFmpeg } from "prism-media";
+import { Scores } from "./models/scores";
 import { TMQClient } from "./tmqclient";
 
 interface Song {
@@ -9,8 +10,16 @@ interface Song {
     length: number
 }
 
+interface SongGuessRates {
+    [key: string]: {
+        appeared: number
+        correct: number
+    }
+}
+
 interface Player {
     name: string
+    id: string
     score: number
     guess: string
     correct: boolean
@@ -36,7 +45,7 @@ const FFMPEG_OPUS_ARGUMENTS = [
     '2',
 ];
 
-const songs = new Collection<string, Song>();
+export const SONGS = new Collection<string, Song>();
 
 const SONG_LIST: {
     names: string[]
@@ -45,14 +54,16 @@ const SONG_LIST: {
 }[] = require('../audio/songs.json');
 
 for (const song of SONG_LIST) {
-    songs.set(song.names[0], {
+    SONGS.set(song.names[0], {
         names: song.names,
         file: song.file,
         length: song.length
     });
 }
 
-
+function cleanFormatting (string: string) {
+    return string.replace(/\`/g, '')
+}
 
 export class Game {
     constructor (client: TMQClient, voiceChannel: BaseGuildVoiceChannel, textChannel: TextChannel) {
@@ -83,6 +94,7 @@ export class Game {
             if (!this.players.get(msg.author.id)) {
                 this.players.set(msg.author.id, {
                     name: msg.author.username,
+                    id: msg.author.id,
                     score: 0,
                     guess: '',
                     correct: false
@@ -92,24 +104,25 @@ export class Game {
             const player = this.players.get(msg.author.id);
             player!.guess = msg.content.toLowerCase();
             if (this.currentSong?.names.includes(player!.guess)) player!.correct = true;
+            console.debug('guess dm recieved')
             msg.react('🗳️');
 
             return;
         }
     }
 
-    getScores () {
+    getScores (guessFormat: boolean) {
         let scorestr = '';
         this.players.sort((a, b) => {
             return b.score - a.score;
         });
         this.players.forEach((player) => {
-            scorestr += `${player.name}: ${player.score}\n`;
+            scorestr += `${player.name}: ${player.score}${guessFormat ? ` ${player.correct ? '✅ ' : ''}${player.guess ? `\`${cleanFormatting(player.guess)}\`` : ''}` : ''}\n`;
         });
         return scorestr;
     }
 
-    startSong () {
+    async startSong () {
         console.debug('start song');
         const embed = new MessageEmbed()
             .setColor(0xfd6b5f);
@@ -117,17 +130,34 @@ export class Game {
         console.debug('past new thing');
 
         if (this.remainingSongs === 0) {
-            const scorestr = this.getScores();
+            const scorestr = this.getScores(false);
             embed.setTitle(`the game is over, thanks for playing!`)
                 .setDescription(scorestr);
             this.textChannel.send({ embeds: [embed] });
+
+            const winners = [...this.players.filter((player) => {
+                return player.score >= [...this.players][0][1].score && player.score > 0;
+            })];
+            for (const value of winners) {
+                const player = value[1];
+
+                const playerRates = await Scores.findOrCreate({ where: {
+                    user_id: player.id
+                } });
+
+                playerRates[0].set({
+                    wins: playerRates[0].getDataValue('wins')+1,
+                })
+                playerRates[0].save();
+            }
+
             this.endGame();
             return;
         }
 
-        this.currentSong = songs.random();
+        this.currentSong = SONGS.random();
         this.remainingSongs--;
-        console.debug(this.currentSong, songs.size);
+        console.debug(this.currentSong, SONGS.size);
 
         const ffmpeg = new FFmpeg({
             args: ['-ss', `${Math.floor(Math.random()*(this.currentSong!.length-30))}`, '-t', '30', '-i', __dirname + '\\..\\audio\\'+ this.currentSong!.file, ...FFMPEG_OPUS_ARGUMENTS]
@@ -143,25 +173,43 @@ export class Game {
         this.end = setTimeout(this.startSong.bind(this), 30_000);
         this.player.play(resource);
         
-        embed.setTitle(`guess the new song, DM me your answer or use /guess!`);
+        embed.setTitle(`guess the new song, use /guess or DM me your answer!`);
         this.textChannel.send({ embeds: [embed] });
     }
 
-    revealSong () {
+    async revealSong () {
         this.state = GameState.Revealing;
         this.client.user?.setActivity({
             name: 'reveal phase!'
         });
 
-        this.players.forEach((player) => {
+        for (const value of [...this.players]) {
+            const player = value[1];
+
             if (player.correct) {
                 player.score++;
             }
+
+            const playerRates = await Scores.findOrCreate({ where: {
+                user_id: player.id
+            } });
+
+            const guessRates: SongGuessRates = JSON.parse(playerRates[0].getDataValue('guess_rates'));
+            if (!guessRates[this.currentSong!.names[0]]) guessRates[this.currentSong!.names[0]] = {appeared:0,correct:0};
+            guessRates[this.currentSong!.names[0]].appeared++;
+            console.debug(player.correct);
+            guessRates[this.currentSong!.names[0]].correct += player.correct ? 1 : 0;
+            playerRates[0].set({
+                guess_rates: JSON.stringify(guessRates)
+            });
+            playerRates[0].save();
+        }
+        const scorestr = this.getScores(true);
+        this.players.forEach((player) => {
             player.guess = '';
             player.correct = false;
         });
 
-        const scorestr = this.getScores();
         const embed = new MessageEmbed()
             .setColor(0xfd6b5f)
             .setTitle(`the answer was ${this.currentSong?.names[0]}!`)
@@ -177,6 +225,10 @@ export class Game {
         this.client.user?.setActivity();
         this.connection.disconnect();
         this.connection.destroy();
+
+        if (this.client.autoRestartGame) {
+            setTimeout(this.client.startGame.bind(this.client), 10_000);
+        }
     }
 
     textChannel: TextChannel

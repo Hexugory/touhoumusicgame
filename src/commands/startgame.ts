@@ -14,6 +14,7 @@ export class StartGameCommand implements Command {
 
 	async execute(msg: Message) {
         const client = msg.client as TMQClient;
-        client.startGame();
+        if (!client.autoRestartGame) return client.startGame();
+        return client.endGame()
 	}
 };

@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionData, CommandInteraction, PermissionResolvable } from "discord.js"
+import { ApplicationCommandOptionData, AutocompleteInteraction, CommandInteraction, PermissionResolvable } from "discord.js"
 
 export interface SlashCommand {
     name: string
@@ -8,5 +8,6 @@ export interface SlashCommand {
     guildID?: string
     ownerOnly: boolean
     args: ApplicationCommandOptionData[]
+    autocomplete?(int: AutocompleteInteraction): Promise<void>
     execute(int: CommandInteraction): Promise<void>
 }

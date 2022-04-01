@@ -2,10 +2,10 @@ import { Message, PermissionResolvable, TextChannel, VoiceChannel } from "discor
 import { TMQClient } from "../tmqclient";
 import { Command } from "./command";
 
-export class EndGameCommand implements Command {
-	name = 'endgame'
-    aliases = ['end']
-    description = 'Ends the music quiz'
+export class StartPerpetualGameCommand implements Command {
+	name = 'startperpetualgame'
+    aliases = ['startperpetual', 'start2']
+    description = 'Starts the music quiz forever'
     usage = ''
     permission: PermissionResolvable[] = ['ADMINISTRATOR']
     guildOnly = true
@@ -14,7 +14,8 @@ export class EndGameCommand implements Command {
 
 	async execute(msg: Message) {
         const client = msg.client as TMQClient;
-        client.autoRestartGame = false;
-        client.endGame();
+        if (client.autoRestartGame) return client.endGame();
+        client.startGame();
+        client.autoRestartGame = true;
 	}
 };
