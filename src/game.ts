@@ -106,8 +106,7 @@ export class Game {
 
             const player = this.players.get(msg.author.id);
             player!.guess = msg.content.toLowerCase();
-            if (this.currentSong?.names.includes(player!.guess)) player!.correct = true;
-            console.debug('guess dm recieved')
+            console.debug('guess dm recieved');
             msg.react('🗳️');
 
             return;
