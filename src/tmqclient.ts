@@ -65,7 +65,8 @@ export class TMQClient extends Client {
                 }
         
                 command.execute(int).catch(error => {
-                    int.reply({ content: 'there was an error, shout at guy and hope he hears you!', ephemeral: true });
+                    int.reply({ content: 'there was an error, shout at guy and hope he hears you!', ephemeral: true })
+                    .catch(error => console.error(error));
                     return console.error(error);
                 });
                 return console.info(`${int.user.tag} (${int.user.id}) used ${command.name} in ${'name' in int.channel ? int.channel.name : 'DM CHANNEL'} (${int.channel.id})`);
