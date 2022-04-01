@@ -17,7 +17,7 @@ export class TestCommand implements Command {
     args = []
 
 	async execute(msg: Message) {
-        const channel = msg.client.channels.resolve('931465802857738250') as TextChannel;
+        const channel = msg.client.channels.resolve('164266554786185216') as TextChannel;
         channel.send(
 `@everyone hello! i have an announcement! today, ~~due to recent events, we're rebranding as~~
 sike! we're still a touhou server this time! but are we really?
