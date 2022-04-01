@@ -85,7 +85,6 @@ export class GuessCommand implements SlashCommand {
 
         const player = client.game.players.get(int.user.id);
         player!.guess = (int.options.get('guess')!.value as string).toLowerCase();
-        if (client.game.currentSong?.names.includes(player!.guess)) player!.correct = true;
 
         if (client.game.state === GameState.Guessing) return int.reply({
             content: 'guess sent!',
