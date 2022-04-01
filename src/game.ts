@@ -194,6 +194,8 @@ export class Game {
         for (const value of [...this.players]) {
             const player = value[1];
 
+            if (this.currentSong?.names.includes(player.guess)) player.correct = true;
+
             if (player.correct) {
                 player.score++;
             }
