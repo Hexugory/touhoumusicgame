@@ -206,7 +206,6 @@ export class Game {
             const guessRates: SongGuessRates = JSON.parse(playerRates[0].getDataValue('guess_rates'));
             if (!guessRates[this.currentSong!.names[0]]) guessRates[this.currentSong!.names[0]] = {appeared:0,correct:0};
             guessRates[this.currentSong!.names[0]].appeared++;
-            console.debug(player.correct);
             guessRates[this.currentSong!.names[0]].correct += player.correct ? 1 : 0;
             playerRates[0].set({
                 guess_rates: JSON.stringify(guessRates)
