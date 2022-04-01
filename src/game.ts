@@ -93,7 +93,7 @@ export class Game {
     messageCallback (msg: Message) {
         if (!(msg.channel instanceof DMChannel) || msg.author.bot) return;
 
-        if (this.state === GameState.Guessing) {
+        if (this.state === GameState.Guessing && msg.content.length <= 75) {
             if (!this.players.get(msg.author.id)) {
                 this.players.set(msg.author.id, {
                     name: msg.author.username,
@@ -122,6 +122,7 @@ export class Game {
         this.players.forEach((player) => {
             scorestr += `${player.name}: ${player.score}${guessFormat ? ` ${player.correct ? '✅ ' : ''}${player.guess ? `\`${cleanFormatting(player.guess)}\`` : ''}` : ''}\n`;
         });
+        scorestr = scorestr.substring(0, 4095);
         return scorestr;
     }
 

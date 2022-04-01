@@ -23,7 +23,7 @@ export class TestCommand implements Command {
 sike! we're still a touhou server this time! but are we really?
 i keep hearing about weird things like "secondaries" and "DMCA takedowns", so today, i've prepared a challenge for you all!
 if you're all such massive touhou fans that need the games so badly, let's see how much you *really* know about touhou...
-with Touhou Music Quiz!
+with the Choujuu Gigaku Music Game!
 can you identify touhou songs *by name* given only a small sample? come join the fun in <#958933434812731412>!`
         );
 	}
