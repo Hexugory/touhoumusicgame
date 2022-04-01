@@ -77,7 +77,7 @@ export class Game {
 
         this.player = createAudioPlayer();
         this.player.on(AudioPlayerStatus.Playing, () => {
-            if (voiceChannel instanceof StageChannel) voiceChannel.guild.me!.voice.setSuppressed(false);
+            if (voiceChannel.guild.me!.voice.channel instanceof StageChannel) voiceChannel.guild.me!.voice.setSuppressed(false);
         });
         this.connection.subscribe(this.player);
 
