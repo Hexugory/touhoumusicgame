@@ -181,7 +181,10 @@ export class Game {
         this.end = setTimeout(this.startSong.bind(this), 30_000);
         this.player.play(resource);
         
-        embed.setTitle(`guess the new song, use /guess or DM me your answer!`);
+        embed.setTitle(`guess the new song, use /guess or DM me your answer!`)
+            .setFooter({
+                text: `${20-this.remainingSongs}/20`
+            });
         this.textChannel.send({ embeds: [embed] });
     }
 
