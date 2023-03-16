@@ -10,10 +10,13 @@ export const db = new Sequelize({
 });
 
 BlacklistUsers.init({
-    user_id: DataTypes.TEXT
+    user_id: {
+        type: DataTypes.TEXT,
+        primaryKey: true
+    }
 },
 {
-    tableName: 'blacklistusers',
+    tableName: 'BlacklistUsers',
     sequelize: db
 });
 
@@ -26,7 +29,7 @@ CommandBlacklist.init({
     }
 },
 {
-    tableName: 'commandblacklist',
+    tableName: 'CommandBlacklist',
     sequelize: db
 });
 
@@ -47,7 +50,7 @@ Scores.init({
     }
 },
 {
-    tableName: 'scores',
+    tableName: 'Scores',
     sequelize: db
 });
 

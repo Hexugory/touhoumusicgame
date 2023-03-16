@@ -24,8 +24,8 @@ export class RandomCaseCommand implements Command {
     ]
 
 	async execute(msg: Message, arglist: {}) {
-        const args = (arglist as RandomCaseArguments)
-        var strSplit = args.string.toLowerCase().split('')
+        const args = (arglist as RandomCaseArguments);
+        var strSplit = args.string.toLowerCase().split('');
         for(let [i, char] of strSplit.entries()){
             if (Math.random() > 0.5) strSplit[i] = char.toUpperCase();
         }

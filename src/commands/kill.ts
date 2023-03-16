@@ -6,12 +6,13 @@ export class KillCommand implements Command {
     aliases = []
     description = 'no'
     usage = 'no'
-    permission: PermissionResolvable[] = ['ADMINISTRATOR']
+    permission = []
     guildOnly = false
-    ownerOnly = false
+    ownerOnly = true
     args = []
 
 	async execute() {
+        console.info('dying');
         process.exit(0);
 	}
 };

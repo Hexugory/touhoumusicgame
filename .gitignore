@@ -2,4 +2,8 @@
 /out
 .env
 *.ogg
-database.sqlite
+*.opus
+*.sqlite
+audio/*.json
+*.zip
+config.json

@@ -4,7 +4,7 @@ import { UserArgument } from "../types/user"
 import { BlacklistUsers } from "../models/blacklistusers"
 
 interface GlobalBlacklistArguments {
-    user: User
+    users: User[]
 }
 
 export class GlobalBlacklistCommand implements Command {
@@ -17,7 +17,7 @@ export class GlobalBlacklistCommand implements Command {
     ownerOnly = true
     args = [
         {
-            key: 'user',
+            key: 'users',
             type: UserArgument,
             infinite: true,
             optional: false
@@ -25,12 +25,22 @@ export class GlobalBlacklistCommand implements Command {
     ]
 
 	async execute(msg: Message, arglist: {}) {
-        const args = (arglist as GlobalBlacklistArguments);
-        const user = (await BlacklistUsers.findOrCreate({ where: { user_id: args.user.id } }))[0];
+        const args = arglist as GlobalBlacklistArguments;
+        let replystr = '';
 
-        if (user) user.destroy()
+        for (const user of args.users){
+            const row = (await BlacklistUsers.findOne({ where: { user_id: user.id } }));
 
-        msg.reply(`${user ? '' : 'un'}blacklisted **${args.user.tag}**`);
-        return;
+            if (row) {
+                row.destroy()
+                replystr += `${user.tag}: removed\n`
+            }
+            else {
+                await BlacklistUsers.create({ user_id: user.id });
+                replystr += `${user.tag}: added\n`
+            }
+        }
+
+        msg.reply(replystr);
 	}
 };

@@ -1,7 +1,7 @@
-import { ApplicationCommandOptionData, AutocompleteInteraction, CommandInteraction } from "discord.js"
+import { ApplicationCommandOptionData, ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction } from "discord.js"
 import { SlashCommand } from "./slash"
-import { TMQClient } from "../tmqclient"
 import { GameState, SONGS } from "../game"
+import { TMQClient } from "../tmqclient"
 
 interface GuessArguments {
     string: string
@@ -13,10 +13,11 @@ export class GuessCommand implements SlashCommand {
     permission = []
     guildID = '163175631562080256'
     ownerOnly = false
+    guildOnly = true
     args: ApplicationCommandOptionData[] = [
         {
             name: 'guess',
-            type: 3, //string
+            type: ApplicationCommandOptionType.String,
             description: 'Your guess',
             required: true,
             autocomplete: true
@@ -57,13 +58,14 @@ export class GuessCommand implements SlashCommand {
 
 	async execute(int: CommandInteraction) {
         const client = int.client as TMQClient;
+        const lobby = client.lobbies.get(int.guildId!);
 
-        if (!client.game) return int.reply({
+        if (!lobby || !lobby.game) return int.reply({
             content: 'there\'s no game right now!',
             ephemeral: true
         });
 
-        if (client.game.state != GameState.Guessing) return int.reply({
+        if (lobby.game.state != GameState.Guessing) return int.reply({
             content: 'it\'s not the guess phase!',
             ephemeral: true
         });
@@ -73,8 +75,8 @@ export class GuessCommand implements SlashCommand {
             ephemeral: true
         });
 
-        if (!client.game.players.get(int.user.id)) {
-            client.game.players.set(int.user.id, {
+        if (!lobby.game.players.get(int.user.id)) {
+            lobby.game.players.set(int.user.id, {
                 name: int.user.username,
                 id: int.user.id,
                 score: 0,
@@ -83,10 +85,10 @@ export class GuessCommand implements SlashCommand {
             });
         }
 
-        const player = client.game.players.get(int.user.id);
+        const player = lobby.game.players.get(int.user.id);
         player!.guess = (int.options.get('guess')!.value as string).toLowerCase();
 
-        if (client.game.state === GameState.Guessing) return int.reply({
+        if (lobby.game.state === GameState.Guessing) return int.reply({
             content: 'guess sent!',
             ephemeral: true
         });

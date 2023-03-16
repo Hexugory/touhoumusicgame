@@ -1,5 +1,5 @@
 import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, joinVoiceChannel, StreamType, VoiceConnection } from "@discordjs/voice";
-import { BaseGuildVoiceChannel, Collection, DMChannel, Message, MessageEmbed, Snowflake, StageChannel, TextChannel } from "discord.js";
+import { BaseGuildVoiceChannel, Collection, DMChannel, Message, EmbedBuilder, Snowflake, StageChannel, TextChannel } from "discord.js";
 import { FFmpeg } from "prism-media";
 import { Scores } from "./models/scores";
 import { TMQClient } from "./tmqclient";
@@ -65,28 +65,56 @@ function cleanFormatting (string: string) {
     return string.replace(/(\`|\n)/g, '');
 }
 
-export class Game {
-    constructor (client: TMQClient, voiceChannel: BaseGuildVoiceChannel, textChannel: TextChannel) {
-        console.debug('constructing game');
+export class Lobby {
+    constructor (client: TMQClient, voiceChannel: StageChannel, repeat: boolean) {
+        this.client = client;
+        this.voiceChannel = voiceChannel;
+        this.repeat = repeat;
 
         this.connection = joinVoiceChannel({
-            channelId: voiceChannel.id,
-            guildId: voiceChannel.guild.id,
-            adapterCreator: voiceChannel.guild.voiceAdapterCreator
+            channelId: this.voiceChannel.id,
+            guildId: this.voiceChannel.guild.id,
+            adapterCreator: this.voiceChannel.guild.voiceAdapterCreator
         });
-
+        
         this.player = createAudioPlayer();
         this.player.on(AudioPlayerStatus.Playing, () => {
-            if (voiceChannel.guild.me!.voice.channel instanceof StageChannel) voiceChannel.guild.me!.voice.setSuppressed(false);
+            if (this.voiceChannel.guild.members.me!.voice.suppress) this.voiceChannel.guild.members.me!.voice.setSuppressed(false);
         });
+
         this.connection.subscribe(this.player);
 
-        this.textChannel = textChannel;
+        this.game = new Game(this);
+    }
 
-        this.client = client;
-        client.on('messageCreate', this.messageCallback.bind(this));
+    startGame () {
+        if (this.game.state != GameState.Ended) this.game.endGame();
+        this.game = new Game(this);
+    }
 
-        this.textChannel.send('the game is starting!');
+    destroyLobby () {
+        this.connection.disconnect();
+        this.connection.destroy();
+        this.player.stop();
+    }
+
+    game: Game
+    client: TMQClient
+    voiceChannel: StageChannel
+    repeat: boolean
+    connection: VoiceConnection
+    player: AudioPlayer
+}
+
+export class Game {
+    constructor (lobby: Lobby) {
+        console.debug('constructing game');
+
+        this.lobby = lobby;
+
+        this.lobby.client.on('messageCreate', this.messageCallback.bind(this));
+
+        this.lobby.voiceChannel.send('the game is starting!');
         this.startSong();
     }
 
@@ -127,7 +155,7 @@ export class Game {
 
     async startSong () {
         console.debug('start song');
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor(0xfd6b5f);
 
         console.debug('past new thing');
@@ -136,12 +164,12 @@ export class Game {
             const scorestr = this.getScores(false);
             embed.setTitle(`the game is over, thanks for playing!`)
                 .setDescription(scorestr);
-            if (this.client.autoRestartGame) {
+            if (this.lobby.repeat) {
                 embed.setFooter({
-                    text: 'starting again in 10 seconds...'
+                    text: 'starting again in 60 seconds...'
                 });
             }
-            this.textChannel.send({ embeds: [embed] });
+            this.lobby.voiceChannel.send({ embeds: [embed] });
 
             const winners = [...this.players.filter((player) => {
                 return player.score >= [...this.players][0][1].score && player.score > 0;
@@ -172,27 +200,22 @@ export class Game {
         });
         const resource = createAudioResource(ffmpeg, { inputType : StreamType.OggOpus });
 
-        this.client.user?.setActivity({
-            name: 'guess phase!'
-        });
-        this
+        this.lobby.voiceChannel.setTopic('guess phase!');
         this.state = GameState.Guessing;
         this.reveal = setTimeout(this.revealSong.bind(this), 20_000);
         this.end = setTimeout(this.startSong.bind(this), 30_000);
-        this.player.play(resource);
+        this.lobby.player.play(resource);
         
         embed.setTitle(`guess the new song, use /guess or DM me your answer!`)
             .setFooter({
                 text: `${20-this.remainingSongs}/20`
             });
-        this.textChannel.send({ embeds: [embed] });
+        this.lobby.voiceChannel.send({ embeds: [embed] });
     }
 
     async revealSong () {
         this.state = GameState.Revealing;
-        this.client.user?.setActivity({
-            name: 'reveal phase!'
-        });
+        this.lobby.voiceChannel.setTopic(this.currentSong?.names[0] || 'error');
 
         for (const value of [...this.players]) {
             const player = value[1];
@@ -222,32 +245,31 @@ export class Game {
             player.correct = false;
         });
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor(0xfd6b5f)
             .setTitle(`the answer was ${this.currentSong?.names[0]}!`)
             .setDescription(scorestr);
-        this.textChannel.send({ embeds: [embed] });
+        this.lobby.voiceChannel.send({ embeds: [embed] });
     }
 
     endGame () {
         this.state = GameState.Ended;
         clearTimeout(this.reveal);
         clearTimeout(this.end);
-        this.client.removeListener('messageCreate', this.messageCallback);
-        this.client.user?.setActivity();
-        this.connection.disconnect();
-        this.connection.destroy();
+        this.lobby.client.removeListener('messageCreate', this.messageCallback);
 
-        if (this.client.autoRestartGame) {
-            setTimeout(this.client.startGame.bind(this.client), 10_000);
+        if (this.lobby.repeat) {
+            setTimeout(this.lobby.startGame.bind(this.lobby), 10_000);
+        }
+        else {
+            this.lobby.voiceChannel.setTopic('');
+            this.lobby.destroyLobby();
+            this.lobby.client.lobbies.delete(this.lobby.voiceChannel.guildId);
         }
     }
 
-    textChannel: TextChannel
-    client: TMQClient
+    lobby: Lobby
     players = new Collection<Snowflake, Player>();
-    connection: VoiceConnection
-    player: AudioPlayer
     currentSong?: Song
     remainingSongs = 20
     state = GameState.Starting

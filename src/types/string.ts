@@ -3,12 +3,12 @@ import { Argument } from "./arg";
 class StringArgumentClass implements Argument {
     name = 'string'
 
-    validate (arg: any): arg is string {
+    validate (arg: string): arg is string {
         return typeof arg === 'string';
     }
 
-    parse (arg: any) {
-        return arg as string;
+    parse (arg: string): string {
+        return arg;
     }
 };
 

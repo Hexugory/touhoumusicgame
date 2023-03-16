@@ -4,7 +4,6 @@ import { TMQClient } from "../tmqclient";
 import { Command } from "./command";
 import { env } from "process";
 import { FFmpeg } from "prism-media";
-import { Game } from "../game";
 
 export class TestCommand implements Command {
 	name = 'test'

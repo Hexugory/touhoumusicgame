@@ -17,5 +17,5 @@ export interface Command {
         infinite: boolean
         optional: boolean
     }[]
-    execute(msg: Message, arglist: {}): Promise<void>
+    execute(msg: Message, arglist: {}): Promise<any>
 }

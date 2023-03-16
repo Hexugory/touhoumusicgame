@@ -1,5 +1,5 @@
 import { Message } from "discord.js"
-import { TMQClient } from "../tmqclient"
+import { CommandClient } from "../commandclient"
 import { Command } from "./command"
 
 export class DeploySlashCommand implements Command{
@@ -13,7 +13,7 @@ export class DeploySlashCommand implements Command{
     args = []
 
 	async execute(msg: Message) {
-        const client = msg.client as TMQClient;
+        const client = msg.client as CommandClient;
 
         client.slashCommands.forEach(async (command) => {
             console.log(command);
