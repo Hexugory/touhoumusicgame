@@ -11,8 +11,9 @@ export class KillCommand implements Command {
     ownerOnly = true
     args = []
 
-	async execute() {
+	async execute(msg: Message) {
         console.info('dying');
+        msg.client.destroy();
         process.exit(0);
 	}
 };

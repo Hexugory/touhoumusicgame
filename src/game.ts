@@ -54,7 +54,7 @@ const SONG_LIST: {
 }[] = require('../audio/songs.json');
 
 for (const song of SONG_LIST) {
-    SONGS.set(song.names[0], {
+    SONGS.set(song.file, {
         names: song.names,
         file: song.file,
         length: song.length
@@ -92,12 +92,12 @@ export class Lobby {
 
         if (!this.voiceChannel.stageInstance) {
             await this.voiceChannel.guild.stageInstances.create(this.voiceChannel, {
-                topic: 'the game is on!'
+                topic: 'the music game is on!'
             });
             this.game = new Game(this);
             return this.game.startSong();
         }
-        this.voiceChannel.stageInstance.setTopic('the game is on!');
+        this.voiceChannel.stageInstance.setTopic('the music game is on!');
         this.game = new Game(this);
         return this.game.startSong();
     }
@@ -149,7 +149,7 @@ export class Game {
 
             const player = this.players.get(msg.author.id);
             player!.guess = msg.content.toLowerCase();
-            console.debug('guess dm recieved');
+            console.debug('guess dm', msg.content);
             msg.react('🗳️');
 
             return;
@@ -233,7 +233,9 @@ export class Game {
         for (const value of [...this.players]) {
             const player = value[1];
 
-            if (this.currentSong?.names.includes(player.guess)) player.correct = true;
+            if (this.currentSong?.names.map((name) => {
+                return name.toLowerCase().replace(/[^\w]/g, '');
+            }).includes(player.guess.toLowerCase().replace(/[^\w]/g, ''))) player.correct = true;
 
             if (player.correct) {
                 player.score++;
@@ -259,8 +261,8 @@ export class Game {
         });
 
         const embed = new EmbedBuilder()
-            .setColor(0xfd6b5f)
-            .setTitle(`the answer was ${this.currentSong?.names[0]}!`)
+            .setColor(0x5ffd5f)
+            .setTitle(`the answer was ${this.currentSong?.names[0].toLowerCase()}!`)
             .setDescription(scorestr || 'no guesses?');
         this.lobby.voiceChannel.send({ embeds: [embed] });
     }
@@ -270,7 +272,7 @@ export class Game {
         clearTimeout(this.reveal);
         clearTimeout(this.end);
         this.lobby.client.removeListener('messageCreate', this.messageCallback);
-        await this.lobby.voiceChannel.stageInstance?.setTopic('the game is over!');
+        if (!force) await this.lobby.voiceChannel.stageInstance?.setTopic('the game is over' + (this.lobby.repeat ? ', restarting...' : '!'));
 
         if (this.lobby.repeat && !force) {
             clearTimeout(this.lobby.starting);

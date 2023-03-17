@@ -8,3 +8,4 @@ audio/*.json
 *.zip
 config.json
 audio/length.js
+audio/doitall.js

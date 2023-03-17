@@ -24,13 +24,17 @@ export class GuessCommand implements SlashCommand {
     ]
 
     async autocomplete(int: AutocompleteInteraction) {
-        const guess = int.options.get('guess')?.value;
+        const guess = (int.options.get('guess')?.value as string | undefined)?.toLowerCase();
         if (typeof guess != 'string' || guess.length < 2) return int.respond([]);
 
-        const matches = SONGS.filter((song) => {
+        const matches: {
+            name: string
+            value: string
+        }[] = [];
+        SONGS.filter((song) => {
             let value = false;
             for (const name of song.names) {
-                if (name.includes(guess)) {
+                if (name.toLowerCase().includes(guess)) {
                     value = true;
                     break;
                 }
@@ -43,12 +47,13 @@ export class GuessCommand implements SlashCommand {
             }
         
             return a.names[0] < b.names[0]? -1 : 1;
-        })
-        .map((song) => {
-            return {
-                name: song.names[0],
-                value: song.names[0]
-            }
+        }).forEach(song => {
+            if (!matches.find(a => {return a.name === song.names[0]})) {
+                return matches.push({
+                    name: song.names[0],
+                    value: song.names[0]
+                })
+            };
         });
         matches.length = Math.min(matches.length, 15);
 
