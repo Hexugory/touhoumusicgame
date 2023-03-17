@@ -4,6 +4,7 @@ import { TMQClient } from "./tmqclient";
 
 const Client = new TMQClient({
     intents: [
+		GatewayIntentBits.MessageContent,
 		GatewayIntentBits.Guilds,
 		GatewayIntentBits.GuildVoiceStates,
 		GatewayIntentBits.GuildMessages,

@@ -204,7 +204,7 @@ export class CommandClient extends Client {
     }
 
     runCommand (msg: Message, command: Command, args: string[]): Command | undefined {
-        if (!command.args[command.args.length-1].infinite) { 
+        if (command.args.length > 0 && !command.args[command.args.length-1].infinite) { 
             args[command.args.length-1] = args.slice(command.args.length-1, args.length).join(' ');
         }
 

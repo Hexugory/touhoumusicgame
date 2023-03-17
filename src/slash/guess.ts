@@ -11,7 +11,6 @@ export class GuessCommand implements SlashCommand {
 	name = 'guess'
     description = 'Submits your guess for the current song'
     permission = []
-    guildID = '163175631562080256'
     ownerOnly = false
     guildOnly = true
     args: ApplicationCommandOptionData[] = [

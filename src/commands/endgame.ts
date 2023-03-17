@@ -18,7 +18,6 @@ export class EndGameCommand implements Command {
 
         if (!lobby) return msg.reply("there's no game ongoing!");
 
-        lobby.game.endGame();
         lobby.destroyLobby();
         return msg.reply("the game is over!");
 	}

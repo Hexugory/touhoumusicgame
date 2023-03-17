@@ -37,7 +37,6 @@ export class StartGameCommand implements Command {
         }
         else {
             msg.reply('restarting game...');
-            lobby?.game.endGame();
             lobby.startGame();
         }
 	}

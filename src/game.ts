@@ -84,26 +84,41 @@ export class Lobby {
 
         this.connection.subscribe(this.player);
 
-        this.game = new Game(this);
+        this.startGame();
     }
 
-    startGame () {
-        if (this.game.state != GameState.Ended) this.game.endGame();
+    async startGame () {
+        if (this.game?.state != GameState.Ended) await this.game?.endGame(true);
+
+        if (!this.voiceChannel.stageInstance) {
+            await this.voiceChannel.guild.stageInstances.create(this.voiceChannel, {
+                topic: 'the game is on!'
+            });
+            this.game = new Game(this);
+            return this.game.startSong();
+        }
+        this.voiceChannel.stageInstance.setTopic('the game is on!');
         this.game = new Game(this);
+        return this.game.startSong();
     }
 
-    destroyLobby () {
+    async destroyLobby () {
+        await this.game?.endGame();
         this.connection.disconnect();
         this.connection.destroy();
         this.player.stop();
+        this.voiceChannel.stageInstance?.delete();
+        
+        this.client.lobbies.delete(this.voiceChannel.guildId);
     }
 
-    game: Game
+    game?: Game
     client: TMQClient
     voiceChannel: StageChannel
     repeat: boolean
     connection: VoiceConnection
     player: AudioPlayer
+    starting = setTimeout(()=>{},0);
 }
 
 export class Game {
@@ -111,11 +126,11 @@ export class Game {
         console.debug('constructing game');
 
         this.lobby = lobby;
+        this.remainingSongs = this.totalSongs;
 
         this.lobby.client.on('messageCreate', this.messageCallback.bind(this));
 
         this.lobby.voiceChannel.send('the game is starting!');
-        this.startSong();
     }
 
     messageCallback (msg: Message) {
@@ -163,10 +178,10 @@ export class Game {
         if (this.remainingSongs === 0) {
             const scorestr = this.getScores(false);
             embed.setTitle(`the game is over, thanks for playing!`)
-                .setDescription(scorestr);
+                .setDescription(scorestr || 'no guesses?');
             if (this.lobby.repeat) {
                 embed.setFooter({
-                    text: 'starting again in 60 seconds...'
+                    text: 'starting again in 30 seconds...'
                 });
             }
             this.lobby.voiceChannel.send({ embeds: [embed] });
@@ -184,10 +199,10 @@ export class Game {
                 playerRates[0].set({
                     wins: playerRates[0].getDataValue('wins')+1,
                 })
-                playerRates[0].save();
+                await playerRates[0].save();
             }
 
-            this.endGame();
+            await this.endGame(false);
             return;
         }
 
@@ -200,7 +215,6 @@ export class Game {
         });
         const resource = createAudioResource(ffmpeg, { inputType : StreamType.OggOpus });
 
-        this.lobby.voiceChannel.setTopic('guess phase!');
         this.state = GameState.Guessing;
         this.reveal = setTimeout(this.revealSong.bind(this), 20_000);
         this.end = setTimeout(this.startSong.bind(this), 30_000);
@@ -208,14 +222,13 @@ export class Game {
         
         embed.setTitle(`guess the new song, use /guess or DM me your answer!`)
             .setFooter({
-                text: `${20-this.remainingSongs}/20`
+                text: `${this.totalSongs-this.remainingSongs}/${this.totalSongs}`
             });
         this.lobby.voiceChannel.send({ embeds: [embed] });
     }
 
     async revealSong () {
         this.state = GameState.Revealing;
-        this.lobby.voiceChannel.setTopic(this.currentSong?.names[0] || 'error');
 
         for (const value of [...this.players]) {
             const player = value[1];
@@ -237,7 +250,7 @@ export class Game {
             playerRates[0].set({
                 guess_rates: JSON.stringify(guessRates)
             });
-            playerRates[0].save();
+            await playerRates[0].save();
         }
         const scorestr = this.getScores(true);
         this.players.forEach((player) => {
@@ -248,30 +261,28 @@ export class Game {
         const embed = new EmbedBuilder()
             .setColor(0xfd6b5f)
             .setTitle(`the answer was ${this.currentSong?.names[0]}!`)
-            .setDescription(scorestr);
+            .setDescription(scorestr || 'no guesses?');
         this.lobby.voiceChannel.send({ embeds: [embed] });
     }
 
-    endGame () {
+    async endGame (force:boolean = false) {
         this.state = GameState.Ended;
         clearTimeout(this.reveal);
         clearTimeout(this.end);
         this.lobby.client.removeListener('messageCreate', this.messageCallback);
+        await this.lobby.voiceChannel.stageInstance?.setTopic('the game is over!');
 
-        if (this.lobby.repeat) {
-            setTimeout(this.lobby.startGame.bind(this.lobby), 10_000);
-        }
-        else {
-            this.lobby.voiceChannel.setTopic('');
-            this.lobby.destroyLobby();
-            this.lobby.client.lobbies.delete(this.lobby.voiceChannel.guildId);
+        if (this.lobby.repeat && !force) {
+            clearTimeout(this.lobby.starting);
+            this.lobby.starting = setTimeout(this.lobby.startGame.bind(this.lobby), 30_000);
         }
     }
 
     lobby: Lobby
     players = new Collection<Snowflake, Player>();
     currentSong?: Song
-    remainingSongs = 20
+    totalSongs = 20
+    remainingSongs: number
     state = GameState.Starting
     reveal = setTimeout(()=>{},0);
     end = setTimeout(()=>{},0);

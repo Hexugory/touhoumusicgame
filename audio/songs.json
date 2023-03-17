@@ -294,7 +294,8 @@
         "names": [
             "a maiden's illusionary funeral ~ necro-fantasy",
             "a maiden's illusionary funeral",
-            "necro-fantasy"
+            "necro-fantasy",
+            "necro fantasy"
         ],
         "file": "07/16.ogg",
         "length": 213
@@ -913,6 +914,10 @@
             "the sealed-away youkai",
             "sealed-away youkai ~ lost place",
             "sealed-away youkai",
+            "the sealed away youkai ~ lost place",
+            "the sealed away youkai",
+            "sealed away youkai ~ lost place",
+            "sealed away youkai",
             "lost place"
         ],
         "file": "11/03.ogg",
@@ -927,7 +932,8 @@
     },
     {
         "names": [
-            "green-eyed jealousy"
+            "green-eyed jealousy",
+            "green eyed jealousy"
         ],
         "file": "11/05.ogg",
         "length": 110
@@ -942,7 +948,9 @@
     {
         "names": [
             "a flower-studded sake dish on mt. ooe",
-            "a flower-studded sake dish on mt ooe"
+            "a flower-studded sake dish on mt ooe",
+            "a flower studded sake dish on mt. ooe",
+            "a flower studded sake dish on mt ooe"
         ],
         "file": "11/07.ogg",
         "length": 107
@@ -1227,7 +1235,8 @@
     },
     {
         "names": [
-            "year-round absorbed curiosity"
+            "year-round absorbed curiosity",
+            "year round absorbed curiosity"
         ],
         "file": "128/04.ogg",
         "length": 84
