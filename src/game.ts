@@ -92,12 +92,12 @@ export class Lobby {
 
         if (!this.voiceChannel.stageInstance) {
             await this.voiceChannel.guild.stageInstances.create(this.voiceChannel, {
-                topic: 'the music game is on!'
+                topic: 'the game is on! (open the stage chat)'
             });
             this.game = new Game(this);
             return this.game.startSong();
         }
-        this.voiceChannel.stageInstance.setTopic('the music game is on!');
+        this.voiceChannel.stageInstance.setTopic('the game is on! (open the stage chat)');
         this.game = new Game(this);
         return this.game.startSong();
     }
