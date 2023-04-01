@@ -715,10 +715,10 @@
     },
     {
         "names": [
-            "Ghostly Band ~ Phantom Ensemble",
             "Phantom Band ~ Phantom Ensemble",
-            "Ghostly Band",
             "Phantom Band",
+            "Ghostly Band ~ Phantom Ensemble",
+            "Ghostly Band",
             "Phantom Ensemble"
         ],
         "file": "09/08.ogg",
