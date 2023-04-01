@@ -1022,35 +1022,6 @@
     },
     {
         "names": [
-            "The Ground's Color is Yellow",
-            "Ground's Color is Yellow"
-        ],
-        "file": "105/03.ogg",
-        "length": 190
-    },
-    {
-        "names": [
-            "Fragrant Plants"
-        ],
-        "file": "105/06.ogg",
-        "length": 198
-    },
-    {
-        "names": [
-            "Dancing Water Spray"
-        ],
-        "file": "105/07.ogg",
-        "length": 198
-    },
-    {
-        "names": [
-            "Ridiculous Game"
-        ],
-        "file": "105/10.ogg",
-        "length": 198
-    },
-    {
-        "names": [
             "Crimson in the Black Sea ~ Legendary Fish",
             "Crimson in the Black Sea",
             "Legendary Fish"
@@ -1792,14 +1763,6 @@
     },
     {
         "names": [
-            "The Village in the Dead of Night",
-            "Village in the Dead of Night"
-        ],
-        "file": "135/15.ogg",
-        "length": 121
-    },
-    {
-        "names": [
             "The Lost Emotion",
             "Lost Emotion"
         ],
@@ -2115,7 +2078,7 @@
     },
     {
         "names": [
-            "Reach For the Moon, Immortal Smoke"
+            "Reach for the Moon, Immortal Smoke"
         ],
         "file": "145/2.11.ogg",
         "length": 345
