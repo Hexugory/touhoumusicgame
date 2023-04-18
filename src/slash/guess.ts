@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionData, ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction } from "discord.js"
-import { SlashCommand } from "./slash"
 import { GameState, SONGS } from "../game"
 import { TMQClient } from "../tmqclient"
+import { SlashCommand } from "./slash"
 
 interface GuessArguments {
     string: string
