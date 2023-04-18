@@ -1,5 +1,5 @@
 import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, joinVoiceChannel, StreamType, VoiceConnection } from "@discordjs/voice";
-import { BaseGuildVoiceChannel, Collection, DMChannel, Message, EmbedBuilder, Snowflake, StageChannel, TextChannel } from "discord.js";
+import { Collection, DMChannel, EmbedBuilder, Message, Snowflake, StageChannel } from "discord.js";
 import { FFmpeg } from "prism-media";
 import { Scores } from "./models/scores";
 import { TMQClient } from "./tmqclient";
@@ -104,6 +104,7 @@ export class Lobby {
 
     async destroyLobby () {
         await this.game?.endGame();
+        clearTimeout(this.starting);
         this.connection.disconnect();
         this.connection.destroy();
         this.player.stop();
