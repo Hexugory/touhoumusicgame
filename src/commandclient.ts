@@ -104,6 +104,7 @@ export class CommandClient extends Client {
     }
 
     async parseCommand (msg: Message): Promise<Command | undefined> {
+        if (!msg.channel.isSendable()) return;
         const args = CommandClient.formatArgs(msg.content.slice(config.prefix.length));
         
         if (args.length < 1) return;

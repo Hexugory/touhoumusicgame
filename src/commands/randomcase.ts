@@ -24,6 +24,7 @@ export class RandomCaseCommand implements Command {
     ]
 
 	async execute(msg: Message, arglist: {}) {
+        if (!msg.channel.isSendable()) return;
         const args = (arglist as RandomCaseArguments);
         var strSplit = args.string.toLowerCase().split('');
         for(let [i, char] of strSplit.entries()){

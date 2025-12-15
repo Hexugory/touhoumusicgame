@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction } from "discord.js"
+import { ApplicationCommandOptionData, ApplicationCommandOptionType, AutocompleteInteraction, ChatInputCommandInteraction } from "discord.js"
 import { GameState, SONGS } from "../game"
 import { TMQClient } from "../tmqclient"
 import { SlashCommand } from "./slash"
@@ -60,7 +60,7 @@ export class GuessCommand implements SlashCommand {
         return int.respond(matches);
     }
 
-	async execute(int: CommandInteraction) {
+	async execute(int: ChatInputCommandInteraction) {
         const client = int.client as TMQClient;
         const lobby = client.lobbies.get(int.guildId!);
 

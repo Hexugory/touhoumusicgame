@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction, PermissionFlagsBits, StageChannel } from "discord.js"
+import { ApplicationCommandOptionData, ApplicationCommandOptionType, ChatInputCommandInteraction, PermissionFlagsBits, StageChannel } from "discord.js"
 import { TMQClient } from "../tmqclient"
 import { SlashCommand } from "./slash"
 
@@ -17,7 +17,7 @@ export class StartGameCommand implements SlashCommand {
         }
     ]
 
-	async execute(int: CommandInteraction) {
+	async execute(int: ChatInputCommandInteraction) {
         const client = int.client as TMQClient;
         const lobby = client.lobbies.get(int.guildId!);
 

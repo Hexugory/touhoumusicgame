@@ -24,6 +24,7 @@ export class EvalCommand implements Command {
     ]
 
 	async execute(msg: Message, arglist: {}) {
+        if (!msg.channel.isSendable()) return;
         const args = (arglist as EvalArguments);
         const result = eval(args.code);
         console.log(args.code);
